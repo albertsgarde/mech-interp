@@ -1,0 +1,38 @@
+defaults:
+  - mas
+  - _self_
+
+params:
+  high_activation_weighting: 1.0
+  firing_threshold: 0.5
+  sample_overlap: 256
+  num_max_samples: 32
+  sample_length_pre: 192
+  sample_length_post: 64
+  samples_to_check: 32
+  seed: 0
+  activation_bins:
+    ranges:
+      - start: 0.0
+        end: 6.0
+        num_bins: 31
+
+dataset_name: 'Skylion007/openwebtext'
+model_name: 'gpt2-small'
+layers:
+  - hook_id: blocks.0.mlp.hook_post
+    num_features: 3072
+  - hook_id: blocks.6.mlp.hook_post
+    num_features: 3072
+  - hook_id: blocks.11.mlp.hook_post
+    num_features: 3072
+  - hook_id: blocks.0.mlp.hook_post
+    sae_hf_repo: jbloom/GPT2-Small-OAI-v5-32k-mlp-out-SAEs
+    sae_file: v5_32k_layer_0/sae_weights.safetensors
+  - hook_id: blocks.5.mlp.hook_post
+    sae_hf_repo: jbloom/GPT2-Small-OAI-v5-32k-mlp-out-SAEs
+    sae_file: v5_32k_layer_5/sae_weights.safetensors
+  - hook_id: blocks.11.mlp.hook_post
+    sae_hf_repo: jbloom/GPT2-Small-OAI-v5-32k-mlp-out-SAEs
+    sae_file: v5_32k_layer_11/sae_weights.safetensors
+out_path: outputs/gpt2-small-mas_store
