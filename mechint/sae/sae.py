@@ -4,10 +4,15 @@ import torch
 import transformer_lens  # type: ignore[import]
 from jaxtyping import Float
 from torch import Tensor
+import transformers
 from transformer_lens import HookedTransformer  # type: ignore[import]
 from transformer_lens.hook_points import HookPoint  # type: ignore[import]
+import huggingface_hub as hf
+import safetensors
 
 from mechint.device import Device  # type: ignore[import]
+
+CACHE_DIR: str = transformers.TRANSFORMERS_CACHE
 
 
 class SparseAutoencoder:
@@ -55,12 +60,19 @@ class SparseAutoencoder:
         return SparseAutoencoder(data["W_enc"], data["b_enc"], data["W_dec"], data["b_dec"], hook_point, device)
 
     @staticmethod
-    def from_hf(repo: str, file: str, hook_point: str, device: Device) -> "SparseAutoencoder":
-        data = transformer_lens.utils.download_file_from_hf(
-            repo,
-            file,
-            force_is_torch=True,
-        )
+    def from_hf(
+        repo: str, file: str, hook_point: str, device: Device, cache_dir: str = CACHE_DIR
+    ) -> "SparseAutoencoder":
+        if file.endswith(".safetensors"):
+            path = hf.hf_hub_download(repo, file, cache_dir=cache_dir)
+            data = safetensors.torch.load_file(path, device="cuda")
+        else:
+            data = transformer_lens.utils.download_file_from_hf(
+                repo,
+                file,
+                force_is_torch=True,
+                cache_dir=cache_dir,
+            )
         return SparseAutoencoder.from_data(data, hook_point, device)
 
     @property
