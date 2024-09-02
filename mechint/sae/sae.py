@@ -7,7 +7,7 @@ from torch import Tensor
 from transformer_lens import HookedTransformer  # type: ignore[import]
 from transformer_lens.hook_points import HookPoint  # type: ignore[import]
 
-from thesis.device import Device  # type: ignore[import]
+from mechint.device import Device  # type: ignore[import]
 
 
 class SparseAutoencoder:

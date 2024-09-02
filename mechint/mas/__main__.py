@@ -10,8 +10,8 @@ from hydra.core.config_store import ConfigStore
 from omegaconf import OmegaConf
 from transformer_lens.HookedTransformer import HookedTransformer  # type: ignore[import]
 
-from thesis.device import get_device
-from thesis.layer import LayerConfig
+from mechint.device import get_device
+from mechint.layer import LayerConfig
 
 from . import algorithm
 from .algorithm import MASParams

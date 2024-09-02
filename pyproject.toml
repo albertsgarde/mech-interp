@@ -3,17 +3,17 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "thesis"
+name = "mechint"
 version = "0.0.1"
-description = "My thesis on Graph Interpretations of Latent Features of Transformer Language Models"
-authors = [{ name = "albertsgarde", email = "your@email.com" }]
+description = "Mech interp research"
+authors = [{ name = "albertsgarde", email = "albertsgarde@gmail.com" }]
 license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.11"
 dynamic = ["dependencies", "optional-dependencies"]
 
 [tool.setuptools]
-packages = ["thesis"]
+packages = ["mechint"]
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
@@ -23,7 +23,7 @@ dev = { file = ['requirements_dev.txt'] }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["thesis"]
+pythonpath = ["mechint"]
 
 
 [tool.ruff]

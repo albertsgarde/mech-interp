@@ -13,7 +13,7 @@ from torch import Tensor
 from transformer_lens.hook_points import HookPoint  # type: ignore[import]
 from transformer_lens.HookedTransformer import HookedTransformer  # type: ignore[import]
 
-from thesis.layer import Layer  # type: ignore[import]
+from mechint.layer import Layer  # type: ignore[import]
 
 from ..device import Device, get_device
 from .sample_loader import SampleDataset

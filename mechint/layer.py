@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass
 from typing import Callable
 
@@ -8,8 +7,8 @@ from jaxtyping import Float
 from sparse_autoencoder import Autoencoder as OAISparseAutoencoder
 from torch import Tensor
 
-from thesis.device import Device
-from thesis.sae.sae import SparseAutoencoder
+from mechint.device import Device
+from mechint.sae.sae import SparseAutoencoder
 
 
 @dataclass
@@ -42,6 +41,7 @@ class Layer:
     @staticmethod
     def from_oai_sae(hook_id: str, sae: OAISparseAutoencoder) -> "Layer":
         return Layer(hook_id, sae.n_latents, sae.encode)
+
 
 @dataclass
 class LayerConfig:

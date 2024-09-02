@@ -3,8 +3,8 @@ from pathlib import Path
 
 from transformer_lens import HookedTransformer  # type: ignore[import]
 
-from thesis.device import Device
-from thesis.mas import WeightedSamplesStore, html
+from mechint.device import Device
+from mechint.mas import WeightedSamplesStore, html
 
 model_name = sys.argv[1]
 mas_path = Path(sys.argv[2])

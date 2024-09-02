@@ -18,9 +18,9 @@ from omegaconf import OmegaConf
 from torch import Tensor
 from transformer_lens.hook_points import HookPoint  # type: ignore[import]
 
-from thesis.device import Device
-from thesis.layer import Layer, LayerConfig
-from thesis.mas.mas_store import MASStore
+from mechint.device import Device
+from mechint.layer import Layer, LayerConfig
+from mechint.mas.mas_store import MASStore
 
 
 @dataclass

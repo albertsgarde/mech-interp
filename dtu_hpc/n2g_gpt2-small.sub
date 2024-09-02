@@ -20,7 +20,7 @@ cd ~/Neuron2Graph/n2g-rs
 maturin develop --release
 cd ~/Neuron2Graph
 python3 -m pip install .
-cd ~/thesis
+cd ~/mechint
 
-python3 -m thesis.n2g --config-name gpt2-small-sae.yaml mas_path=/work3/s183969/outputs/gpt2-small_sae_store.zip out_path=/work3/s183969/outputs/gpt2-small_sae_n2g end_index=128
+python3 -m mechint.n2g --config-name gpt2-small-sae.yaml mas_path=/work3/s183969/outputs/gpt2-small_sae_store.zip out_path=/work3/s183969/outputs/gpt2-small_sae_n2g end_index=128
 

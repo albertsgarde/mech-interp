@@ -11,9 +11,9 @@ from torch import Tensor
 from transformer_lens import HookedTransformer
 from transformer_lens.hook_points import HookPoint  # type: ignore[import]
 
-from thesis.device import Device
-from thesis.mas.mas_store import MASStore
-from thesis.sae.sae import SparseAutoencoder
+from mechint.device import Device
+from mechint.mas.mas_store import MASStore
+from mechint.sae.sae import SparseAutoencoder
 
 FEATURES: list[int] = [274]
 
@@ -64,7 +64,7 @@ def feature_activation(
     return lambda samples: sae.feature_activations(model, samples, FEATURES[feature_index])
 
 
-with Path("thesis/n2g/word_to_casings.json").open("r", encoding="utf-8") as f:
+with Path("mechint/n2g/word_to_casings.json").open("r", encoding="utf-8") as f:
     word_to_casings = json.load(f)
 
 train_config = n2g.TrainConfig(
