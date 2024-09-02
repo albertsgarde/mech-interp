@@ -10,6 +10,6 @@ graphviz ~= 0.20.1
 sparse_autoencoder @ git+https://github.com/UFO-101/sparse_autoencoder.git # Required to fix a dependency issue with transformer_lens
 aiofiles ~= 23.2.1
 nest-asyncio~=1.6.0
-safe_tensors ~= 0.4.3
-huggingface_hub ~= 0.23.3
+safetensors ~= 0.4.4
+huggingface-hub ~= 0.24.6
 transformers ~= 4.41.2

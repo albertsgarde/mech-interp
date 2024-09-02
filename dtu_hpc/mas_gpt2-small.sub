@@ -9,9 +9,7 @@
 #BSUB -R "rusage[mem=4096]"
 #BSUB -gpu "num=1:mode=exclusive_process"
 
-module load python3/3.11.3
-module load nvhpc/22.11-nompi
-module load cuda/11.8
+module load python3/3.12.4
 
 source .venv/bin/activate
 python3 -m pip install --upgrade pip
