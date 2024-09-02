@@ -22,14 +22,14 @@ model_name: 'gpt2-small'
 layers:
   - hook_id: blocks.0.mlp.hook_post
     num_features: 3072
-  - hook_id: blocks.4.mlp.hook_post
-    num_features: 3072
   - hook_id: blocks.5.mlp.hook_post
+    num_features: 3072
+  - hook_id: blocks.11.mlp.hook_post
     num_features: 3072
   - hook_id: blocks.0.mlp.hook_post
     sae_oai_layer: 0
-  - hook_id: blocks.4.mlp.hook_post
-    sae_oai_layer: 4
   - hook_id: blocks.5.mlp.hook_post
     sae_oai_layer: 5
+  - hook_id: blocks.11.mlp.hook_post
+    sae_oai_layer: 11
 out_path: outputs/gpt2-small_sae_store
