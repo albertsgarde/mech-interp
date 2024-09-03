@@ -1,14 +1,14 @@
 from typing import Callable, Tuple
 
-import torch
-import transformer_lens  # type: ignore[import]
-from jaxtyping import Float
-from torch import Tensor
-import transformers
-from transformer_lens import HookedTransformer  # type: ignore[import]
-from transformer_lens.hook_points import HookPoint  # type: ignore[import]
 import huggingface_hub as hf
 import safetensors
+import torch
+import transformer_lens  # type: ignore[import]
+import transformers
+from jaxtyping import Float
+from torch import Tensor
+from transformer_lens import HookedTransformer  # type: ignore[import]
+from transformer_lens.hook_points import HookPoint  # type: ignore[import]
 
 from mechint.device import Device  # type: ignore[import]
 

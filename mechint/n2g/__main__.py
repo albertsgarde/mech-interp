@@ -68,7 +68,8 @@ def main(config: N2GScriptConfig) -> None:
 
     if num_features != mas_store.num_features():
         raise ValueError(
-            f"Number of features in MAS store does not match number of features in layers. {num_features=}, {mas_store.num_features()=}"
+            "Number of features in MAS store does not match number of features in layers. "
+            f"{num_features=}, {mas_store.num_features()=}"
         )
 
     def mas_to_layer_index(mas_index: int) -> Tuple[int, int]:
