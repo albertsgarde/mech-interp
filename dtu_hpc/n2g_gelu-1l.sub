@@ -23,4 +23,3 @@ python3 -m pip install .
 cd ~/mechint
 
 python3 -m mechint.n2g --config-name gelu-1l-sae.yaml mas_path=/work3/s183969/outputs/gelu-1l_sae_store.zip out_path=/work3/s183969/outputs/gelu-1l_sae_n2g
-
