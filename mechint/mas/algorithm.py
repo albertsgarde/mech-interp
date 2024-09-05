@@ -55,21 +55,26 @@ class MASParams:
     num_max_samples: int
     sample_length_pre: int
     sample_length_post: int
-    samples_to_check: int
     seed: int
     activation_bins: BinSet
+    samples_to_check: int | None = None
+    max_time: float | None = None
 
     def __post_init__(self):
         if self.sample_overlap < 0:
             raise ValueError("Sample overlap must be at least 0.")
-        if self.num_max_samples <= 0:
+        if self.num_max_samples and self.num_max_samples <= 0:
             raise ValueError("Number of max samples must be greater than 0.")
         if self.sample_length_pre < 0:
             raise ValueError("Sample length pre must be at least 0.")
         if self.sample_length_post <= 0:
             raise ValueError("Sample length post must be greater than 0.")
-        if self.samples_to_check <= 0:
+        if not self.samples_to_check and not self.max_time:
+            raise ValueError("Either samples to check or max time must be set.")
+        if self.samples_to_check and self.samples_to_check <= 0:
             raise ValueError("Samples to check must be greater than 0.")
+        if self.max_time and self.max_time <= 0:
+            raise ValueError("Max time must be greater than 0.")
         if isinstance(self.activation_bins, dict):
             if "ranges" in self.activation_bins:
                 self.activation_bins["ranges"] = [
@@ -152,16 +157,24 @@ def run(
             mas_time += time.time() - mas_start_time
             assert mas_store.num_samples_added() == i + 1
 
-            cur_percentage = int(math.floor(i / params.samples_to_check * 100))
-            if cur_percentage > last_percentage:
-                print(f"{cur_percentage}%")
-                last_percentage = cur_percentage
+            if params.samples_to_check:
+                cur_percentage = int(math.floor(i / params.samples_to_check * 100))
+                if cur_percentage > last_percentage:
+                    print(f"{cur_percentage}%")
+                    last_percentage = cur_percentage
+            if params.max_time and time.time() - start_time > params.max_time:
+                print("Time limit reached.")
+                break
+        samples_processed = mas_store.num_samples_added()
         end_time = time.time()
-        print(f"Time taken: {end_time - start_time:.2f}s")
-        print(f"Time taken per sample: {(end_time - start_time) / (params.samples_to_check)*1000:.2f}ms")
+        time_elapsed = end_time - start_time
+        print(f"Samples processed: {samples_processed}")
+        print(f"Time taken: {time_elapsed:.2f}s")
+        time_per_sample = f"{time_elapsed / samples_processed / 1000:.2f}ms" if samples_processed > 0 else "NA"
+        print(f"Time taken per sample: {time_per_sample}")
 
-        print(f"Model time: {model_time:.2f}s ({model_time/(end_time - start_time)*100:.2f}%)")
-        print(f"MAS time: {mas_time:.2f}s ({mas_time/(end_time - start_time)*100:.2f}%)")
+        print(f"Model time: {model_time:.2f}s ({model_time/time_elapsed*100:.2f}%)")
+        print(f"MAS time: {mas_time:.2f}s ({mas_time/time_elapsed*100:.2f}%)")
 
         mas_store._sort_samples()
         return mas_store
