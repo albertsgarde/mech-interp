@@ -1,10 +1,10 @@
 from typing import Callable, Tuple
 
-import huggingface_hub as hf
+import huggingface_hub as hf  # type: ignore[import]
 import safetensors
 import torch
 import transformer_lens  # type: ignore[import]
-import transformers
+import transformers  # type: ignore[import]
 from jaxtyping import Float
 from torch import Tensor
 from transformer_lens import HookedTransformer  # type: ignore[import]
@@ -65,7 +65,7 @@ class SparseAutoencoder:
     ) -> "SparseAutoencoder":
         if file.endswith(".safetensors"):
             path = hf.hf_hub_download(repo, file, cache_dir=cache_dir)
-            data = safetensors.torch.load_file(path, device="cuda")
+            data = safetensors.torch.load_file(path, device="cuda")  # type: ignore[attr-defined]
         else:
             data = transformer_lens.utils.download_file_from_hf(
                 repo,
