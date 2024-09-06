@@ -2,6 +2,17 @@ defaults:
   - mas
   - _self_
 
+out_path: outputs/gelu-1l-sae_store
+dataset_name: 'NeelNanda/c4-code-20k'
+model_name: 'gelu-1l'
+
+layers:
+  - hook_id: blocks.0.mlp.hook_post
+    num_features: 2048
+  - hook_id: blocks.0.mlp.hook_post
+    sae_hf_repo: NeelNanda/sparse_autoencoder
+    sae_file: 25.pt
+
 params:
   high_activation_weighting: 1.0
   firing_threshold: 0.5
@@ -9,20 +20,10 @@ params:
   num_max_samples: 32
   sample_length_pre: 192
   sample_length_post: 64
-  samples_to_check: 32
   seed: 0
+  samples_to_check: 32
   activation_bins:
     ranges:
       - start: 0.0
         end: 6.0
         num_bins: 31
-
-dataset_name: 'NeelNanda/c4-code-20k'
-model_name: 'gelu-1l'
-layers:
-  - hook_id: blocks.0.mlp.hook_post
-    num_features: 2048
-  - hook_id: blocks.0.mlp.hook_post
-    sae_hf_repo: NeelNanda/sparse_autoencoder
-    sae_file: 25.pt
-out_path: outputs/gelu-1l-sae_store

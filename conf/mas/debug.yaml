@@ -5,6 +5,7 @@ defaults:
 out_path: outputs/mas_store
 dataset_name: 'monology/pile-uncopyrighted'
 model_name: 'gelu-2l'
+
 layers:
   - hook_id: blocks.0.mlp.hook_post
     num_features: 2048
@@ -18,8 +19,8 @@ params:
   num_max_samples: 32
   sample_length_pre: 192
   sample_length_post: 64
-  samples_to_check: 32
   seed: 0
+  samples_to_check: 32
   activation_bins:
     ranges:
       - start: 0.0

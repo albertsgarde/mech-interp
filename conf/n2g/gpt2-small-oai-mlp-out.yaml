@@ -5,14 +5,14 @@ defaults:
 mas_path: 'outputs/gpt2-small-mas_store'
 model_name: 'gpt2-small'
 out_path: outputs/gpt2-small-n2g
-params:
-  stop_on_error: false
-start_index: 0
-end_index: 107520
+
 create_dot: false
 create_pkl: false
 create_bin: true
 save_activations: true
+start_index: 0
+end_index: 107520
+
 layers:
   - hook_id: blocks.0.mlp.hook_post
     num_features: 3072
@@ -29,3 +29,6 @@ layers:
   - hook_id: blocks.11.mlp.hook_post
     sae_hf_repo: jbloom/GPT2-Small-OAI-v5-32k-mlp-out-SAEs
     sae_file: v5_32k_layer_11/sae_weights.safetensors
+
+params:
+  stop_on_error: false
