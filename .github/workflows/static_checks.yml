@@ -17,8 +17,8 @@ jobs:
       - name: Find Trailing Whitespace
         uses: harupy/find-trailing-whitespace@v1.0
 
-      - name: Validate YAML file
-        run: yamllint abc.yml
+      - name: Validate YAML files
+        run: yamllint .
 
       - name: Ruff
         uses: chartboost/ruff-action@v1
