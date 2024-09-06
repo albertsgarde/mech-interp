@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Callable, Tuple
 
-import n2g
+import n2g  # type: ignore[import]
 import torch
 import transformer_lens  # type: ignore[import]
 from jaxtyping import Float, Int
