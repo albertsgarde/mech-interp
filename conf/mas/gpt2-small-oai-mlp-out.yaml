@@ -8,11 +8,11 @@ model_name: 'gpt2-small'
 
 layers:
   - hook_id: blocks.0.mlp.hook_post
-    num_features: 3072
+    num_features: 768
   - hook_id: blocks.6.mlp.hook_post
-    num_features: 3072
+    num_features: 768
   - hook_id: blocks.11.mlp.hook_post
-    num_features: 3072
+    num_features: 768
   - hook_id: blocks.0.mlp.hook_post
     sae_hf_repo: jbloom/GPT2-Small-OAI-v5-32k-mlp-out-SAEs
     sae_file: v5_32k_layer_0/sae_weights.safetensors
