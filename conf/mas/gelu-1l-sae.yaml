@@ -21,7 +21,6 @@ params:
   sample_length_pre: 192
   sample_length_post: 64
   seed: 0
-  samples_to_check: 32
   activation_bins:
     ranges:
       - start: 0.0

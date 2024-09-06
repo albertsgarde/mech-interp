@@ -20,12 +20,13 @@ params:
   sample_length_pre: 192
   sample_length_post: 64
   seed: 0
-  samples_to_check: 32
   activation_bins:
     ranges:
       - start: 0.0
         end: 6.0
         num_bins: 31
+  samples_to_check: 128
+  max_time: 10
 
 wandb:
   project: "mas_debug"
