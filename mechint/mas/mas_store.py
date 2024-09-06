@@ -102,7 +102,7 @@ class MASStore:
 
             tensors_serialized = {name: zip_file.read(name) for name in zip_file.namelist() if name != "ints"}
             tensors_dict = {
-                name: torch.load(BytesIO(tensors_serialized[name]), map_location=device.torch())
+                name: torch.load(BytesIO(tensors_serialized[name]), map_location=device.torch(), weights_only=True)
                 for name in tensors_serialized
             }
 

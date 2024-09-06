@@ -26,11 +26,11 @@ class MASWandBConfig:
 
 @dataclass
 class MASScriptConfig:
-    params: MASParams
+    out_path: str
     dataset_name: str
     model_name: str
     layers: list[LayerConfig]
-    out_path: str
+    params: MASParams
     wandb: MASWandBConfig | None = None
 
 

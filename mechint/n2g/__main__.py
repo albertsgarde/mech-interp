@@ -1,3 +1,4 @@
+import dataclasses
 import json
 import pickle
 import typing
@@ -10,6 +11,7 @@ import n2g  # type: ignore[import]
 import numpy as np
 import torch
 import transformer_lens  # type: ignore[import]
+import wandb
 from beartype import beartype
 from hydra.core.config_store import ConfigStore
 from jaxtyping import Float, Int
@@ -29,18 +31,24 @@ class N2GParams:
 
 
 @dataclass
+class N2GWandBConfig:
+    project: str
+
+
+@dataclass
 class N2GScriptConfig:
     mas_path: str
-    model_name: str
-    start_index: int
-    end_index: int
-    layers: list[LayerConfig]
     out_path: str
+    model_name: str
     create_dot: bool
     create_pkl: bool
     create_bin: bool
     save_activations: bool
+    start_index: int
+    end_index: int
+    layers: list[LayerConfig]
     params: N2GParams
+    wandb: N2GWandBConfig | None = None
 
 
 cs = ConfigStore.instance()
@@ -130,6 +138,9 @@ def main(config: N2GScriptConfig) -> None:
     )
     train_config = n2g.TrainConfig(fit_config=fit_config, stop_on_error=config.params.stop_on_error)
 
+    if config.wandb:
+        wandb.init(project=config.wandb.project, config=dataclasses.asdict(config))
+
     stats: list[NeuronStats]
     models: list[NeuronModel]
     models, stats, activations, pred_activations = n2g.run_layer(
@@ -208,6 +219,8 @@ def hydra_main(omega_config: OmegaConf) -> None:
     )
     dict_config["layers"] = [LayerConfig(**layer) for layer in dict_config["layers"]]
     dict_config["params"] = N2GParams(**dict_config["params"])
+    if dict_config.get("wandb"):
+        dict_config["wandb"] = N2GWandBConfig(**dict_config["wandb"])
     config = N2GScriptConfig(**dict_config)
     assert isinstance(config, N2GScriptConfig)
     main(config)

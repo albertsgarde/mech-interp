@@ -2,20 +2,21 @@ defaults:
   - n2g
   - _self_
 
-mas_path: 'outputs/gelu-1l_sae_store.zip'
+mas_path: 'outputs/mas_store.zip'
 model_name: 'gelu-1l'
 out_path: outputs/gelu-1l-n2g
-params:
-  stop_on_error: true
-start_index: 0
-end_index: 5
 create_dot: false
 create_pkl: false
 create_bin: true
 save_activations: true
+start_index: 0
+end_index: 5
 layers:
   - hook_id: blocks.0.mlp.hook_post
     num_features: 2048
-  - hook_id: blocks.0.mlp.hook_post
-    sae_hf_repo: NeelNanda/sparse_autoencoder
-    sae_file: 25.pt
+  - hook_id: blocks.1.mlp.hook_post
+    num_features: 2048
+params:
+  stop_on_error: true
+wandb:
+  project: "n2g_debug"

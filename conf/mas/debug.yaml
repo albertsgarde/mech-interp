@@ -2,6 +2,15 @@ defaults:
   - mas
   - _self_
 
+out_path: outputs/mas_store
+dataset_name: 'monology/pile-uncopyrighted'
+model_name: 'gelu-2l'
+layers:
+  - hook_id: blocks.0.mlp.hook_post
+    num_features: 2048
+  - hook_id: blocks.1.mlp.hook_post
+    num_features: 2048
+
 params:
   high_activation_weighting: 1.0
   firing_threshold: 0.5
@@ -16,15 +25,6 @@ params:
       - start: 0.0
         end: 6.0
         num_bins: 31
-
-dataset_name: 'monology/pile-uncopyrighted'
-model_name: 'gelu-2l'
-layers:
-  - hook_id: blocks.0.mlp.hook_post
-    num_features: 2048
-  - hook_id: blocks.1.mlp.hook_post
-    num_features: 2048
-out_path: outputs/mas_store
 
 wandb:
   project: "mas_debug"
