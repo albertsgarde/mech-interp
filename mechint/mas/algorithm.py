@@ -92,7 +92,8 @@ def run(
         device = get_device()
         print(f"Using device: {device.torch()}")
 
-        dataset = dataset.take(params.samples_to_check)  # type: ignore[reportUnknownMemberType]
+        if params.samples_to_check:
+            dataset = dataset.take(params.samples_to_check)  # type: ignore[reportUnknownMemberType]
 
         if model.tokenizer is None:
             raise ValueError("Model must have tokenizer.")
