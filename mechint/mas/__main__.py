@@ -52,6 +52,7 @@ def main(config: MASScriptConfig) -> None:
     mas_layers = [layer.to_layer(device) for layer in config.layers]
 
     if config.wandb:
+        wandb.require("core")  # type: ignore[attr-defined]
         wandb.init(project=config.wandb.project, config=dataclasses.asdict(config))
     mas_store = algorithm.run(model, dataset, mas_layers, config.params, device)
 
