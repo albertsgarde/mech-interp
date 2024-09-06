@@ -25,3 +25,6 @@ layers:
   - hook_id: blocks.1.mlp.hook_post
     num_features: 2048
 out_path: outputs/mas_store
+
+wandb:
+  project: "mas_debug"

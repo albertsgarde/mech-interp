@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Callable, Tuple
 
 import hydra
-import n2g
+import n2g  # type: ignore[import]
 import numpy as np
 import torch
 import transformer_lens  # type: ignore[import]

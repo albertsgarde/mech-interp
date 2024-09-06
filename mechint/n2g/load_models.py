@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Sequence
 
 import aiofiles
-from n2g import FeatureModel, NeuronModel, Tokenizer
+from n2g import FeatureModel, NeuronModel, Tokenizer  # type: ignore[import]
 
 
 async def read_model(models_path: Path, index: int) -> NeuronModel:

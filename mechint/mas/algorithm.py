@@ -7,6 +7,7 @@ from typing import Callable
 
 import numpy as np
 import torch
+import wandb
 from datasets import IterableDataset  # type: ignore[import]
 from jaxtyping import Float
 from torch import Tensor
@@ -156,6 +157,7 @@ def run(
             mas_store.add_sample(sample, activation_scratch)
             mas_time += time.time() - mas_start_time
             assert mas_store.num_samples_added() == i + 1
+            wandb.log({"samples_processed": mas_store.num_samples_added()})
 
             if params.samples_to_check:
                 cur_percentage = int(math.floor(i / params.samples_to_check * 100))

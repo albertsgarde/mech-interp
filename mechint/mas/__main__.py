@@ -1,9 +1,11 @@
+import dataclasses
 import typing
 from dataclasses import dataclass
 from pathlib import Path
 
 import datasets  # type: ignore[missingTypeStubs, import-untyped]
 import hydra
+import wandb
 from beartype import beartype
 from datasets import IterableDataset  # type: ignore[missingTypeStubs]
 from hydra.core.config_store import ConfigStore
@@ -18,12 +20,18 @@ from .algorithm import MASParams
 
 
 @dataclass
+class MASWandBConfig:
+    project: str
+
+
+@dataclass
 class MASScriptConfig:
     params: MASParams
     dataset_name: str
     model_name: str
     layers: list[LayerConfig]
     out_path: str
+    wandb: MASWandBConfig | None = None
 
 
 cs = ConfigStore.instance()
@@ -43,6 +51,8 @@ def main(config: MASScriptConfig) -> None:
 
     mas_layers = [layer.to_layer(device) for layer in config.layers]
 
+    if config.wandb:
+        wandb.init(project=config.wandb.project, config=dataclasses.asdict(config))
     mas_store = algorithm.run(model, dataset, mas_layers, config.params, device)
 
     if not config.out_path.endswith(".zip"):
@@ -60,6 +70,8 @@ def hydra_main(omega_config: OmegaConf) -> None:
     )
     dict_config["layers"] = [LayerConfig(**layer) for layer in dict_config["layers"]]
     dict_config["params"] = MASParams(**dict_config["params"])
+    if dict_config.get("wandb"):
+        dict_config["wandb"] = MASWandBConfig(**dict_config["wandb"])
     config = MASScriptConfig(**dict_config)
     assert isinstance(config, MASScriptConfig)
     main(config)
