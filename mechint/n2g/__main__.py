@@ -58,6 +58,12 @@ cs.store(name="n2g", node=N2GScriptConfig)
 
 @beartype
 def main(config: N2GScriptConfig) -> None:
+    if config.wandb:
+        wandb.init(project=config.wandb.project, config=dataclasses.asdict(config))
+        log_wandb = True
+    else:
+        log_wandb = False
+
     torch.set_grad_enabled(False)
 
     device = Device.get()
@@ -138,9 +144,6 @@ def main(config: N2GScriptConfig) -> None:
     )
     train_config = n2g.TrainConfig(fit_config=fit_config, stop_on_error=config.params.stop_on_error)
 
-    if config.wandb:
-        wandb.init(project=config.wandb.project, config=dataclasses.asdict(config))
-
     stats: list[NeuronStats]
     models: list[NeuronModel]
     models, stats, activations, pred_activations = n2g.run_layer(
@@ -151,6 +154,7 @@ def main(config: N2GScriptConfig) -> None:
         word_to_casings,
         device.torch(),
         train_config,
+        log_wandb,
     )
 
     num_none_models = sum(model is None for model in models)

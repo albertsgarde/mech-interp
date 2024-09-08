@@ -5,6 +5,7 @@ from pathlib import Path
 
 import datasets  # type: ignore[missingTypeStubs, import-untyped]
 import hydra
+import torch
 import wandb
 from beartype import beartype
 from datasets import IterableDataset  # type: ignore[missingTypeStubs]
@@ -41,6 +42,15 @@ cs.store(name="mas", node=MASScriptConfig)
 
 @beartype
 def main(config: MASScriptConfig) -> None:
+    if config.wandb:
+        wandb.require("core")  # type: ignore[attr-defined]
+        wandb.init(project=config.wandb.project, config=dataclasses.asdict(config))
+        log_wandb = True
+    else:
+        log_wandb = False
+
+    torch.set_grad_enabled(False)
+
     device = get_device()
 
     dataset: IterableDataset = datasets.load_dataset(  # type: ignore[reportUnknownMemberType]
@@ -51,10 +61,7 @@ def main(config: MASScriptConfig) -> None:
 
     mas_layers = [layer.to_layer(device) for layer in config.layers]
 
-    if config.wandb:
-        wandb.require("core")  # type: ignore[attr-defined]
-        wandb.init(project=config.wandb.project, config=dataclasses.asdict(config))
-    mas_store = algorithm.run(model, dataset, mas_layers, config.params, device)
+    mas_store = algorithm.run(model, dataset, mas_layers, config.params, device, log_wandb)
 
     if not config.out_path.endswith(".zip"):
         config.out_path += ".zip"
