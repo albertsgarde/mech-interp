@@ -22,3 +22,5 @@ layers:
 
 params:
   stop_on_error: false
+
+wandb: {}

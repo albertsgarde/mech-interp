@@ -32,7 +32,7 @@ class N2GParams:
 
 @dataclass
 class N2GWandBConfig:
-    project: str
+    project: str | None = None
 
 
 @dataclass
@@ -48,7 +48,7 @@ class N2GScriptConfig:
     end_index: int
     layers: list[LayerConfig]
     params: N2GParams
-    wandb: N2GWandBConfig | None = None
+    wandb: N2GWandBConfig
 
 
 cs = ConfigStore.instance()
@@ -58,7 +58,7 @@ cs.store(name="n2g", node=N2GScriptConfig)
 
 @beartype
 def main(config: N2GScriptConfig) -> None:
-    if config.wandb:
+    if config.wandb.project:
         wandb.init(project=config.wandb.project, config=dataclasses.asdict(config))
         log_wandb = True
     else:
@@ -223,8 +223,7 @@ def hydra_main(omega_config: OmegaConf) -> None:
     )
     dict_config["layers"] = [LayerConfig(**layer) for layer in dict_config["layers"]]
     dict_config["params"] = N2GParams(**dict_config["params"])
-    if dict_config.get("wandb"):
-        dict_config["wandb"] = N2GWandBConfig(**dict_config["wandb"])
+    dict_config["wandb"] = N2GWandBConfig(**dict_config["wandb"])
     config = N2GScriptConfig(**dict_config)
     assert isinstance(config, N2GScriptConfig)
     main(config)

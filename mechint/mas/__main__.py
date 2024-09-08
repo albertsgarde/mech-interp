@@ -22,7 +22,7 @@ from .algorithm import MASParams
 
 @dataclass
 class MASWandBConfig:
-    project: str
+    project: str | None = None
 
 
 @dataclass
@@ -32,7 +32,7 @@ class MASScriptConfig:
     model_name: str
     layers: list[LayerConfig]
     params: MASParams
-    wandb: MASWandBConfig | None = None
+    wandb: MASWandBConfig
 
 
 cs = ConfigStore.instance()
@@ -42,7 +42,7 @@ cs.store(name="mas", node=MASScriptConfig)
 
 @beartype
 def main(config: MASScriptConfig) -> None:
-    if config.wandb:
+    if config.wandb.project:
         wandb.require("core")  # type: ignore[attr-defined]
         wandb.init(project=config.wandb.project, config=dataclasses.asdict(config))
         log_wandb = True
@@ -78,8 +78,7 @@ def hydra_main(omega_config: OmegaConf) -> None:
     )
     dict_config["layers"] = [LayerConfig(**layer) for layer in dict_config["layers"]]
     dict_config["params"] = MASParams(**dict_config["params"])
-    if dict_config.get("wandb"):
-        dict_config["wandb"] = MASWandBConfig(**dict_config["wandb"])
+    dict_config["wandb"] = MASWandBConfig(**dict_config["wandb"])
     config = MASScriptConfig(**dict_config)
     assert isinstance(config, MASScriptConfig)
     main(config)
