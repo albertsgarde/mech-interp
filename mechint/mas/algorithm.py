@@ -164,7 +164,13 @@ def run(
             mas_time += time.time() - mas_start_time
             assert mas_store.num_samples_added() == i + 1
             if log_wandb:
-                wandb.log({"samples_processed": mas_store.num_samples_added()})
+                time_elapsed = time.time() - start_time
+                log_dict = {
+                    "samples_processed": mas_store.num_samples_added(),
+                    "model_time_percent": model_time / time_elapsed * 100,
+                    "mas_time_percent": mas_time / time_elapsed * 100,
+                }
+                wandb.log(log_dict)
 
             if params.samples_to_check:
                 cur_percentage = int(math.floor(i / params.samples_to_check * 100))
