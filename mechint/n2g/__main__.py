@@ -60,6 +60,7 @@ cs.store(name="n2g", node=N2GScriptConfig)
 @beartype
 def main(config: N2GScriptConfig) -> None:
     if config.wandb.project:
+        wandb.require("core")  # type: ignore[attr-defined]
         wandb.init(project=config.wandb.project, config=dataclasses.asdict(config))
         log_wandb = True
     else:
