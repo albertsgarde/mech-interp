@@ -16,12 +16,17 @@ if ":" in indices_string:
 else:
     indices = [int(index) for index in indices_string.split(",")]
 
+start_index = min(indices)
+end_index = max(indices) + 1
+
 device = Device.get()
 model = HookedTransformer.from_pretrained(model_name, device=device.torch())
-store = WeightedSamplesStore.load(mas_path, device)
+store = WeightedSamplesStore.load(mas_path, device, feature_range=(start_index, end_index))
 
 for index in indices:
-    html_str = html.generate_html(model, store.feature_samples()[index], store.feature_activations()[index])
+    html_str = html.generate_html(
+        model, store.feature_samples()[index - start_index], store.feature_activations()[index - start_index]
+    )
     out_dir.mkdir(parents=True, exist_ok=True)
     with open(out_dir / f"{index}.html", "w") as f:
         f.write(html_str)

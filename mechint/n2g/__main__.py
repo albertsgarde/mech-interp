@@ -68,7 +68,9 @@ def main(config: N2GScriptConfig) -> None:
 
     device = Device.get()
 
-    mas_store = WeightedSamplesStore.load(Path(config.mas_path), device)
+    mas_store = WeightedSamplesStore.load(
+        Path(config.mas_path), device, feature_range=(config.start_index, config.end_index)
+    )
 
     model = transformer_lens.HookedTransformer.from_pretrained(config.model_name, device=device.torch())
 
@@ -80,25 +82,25 @@ def main(config: N2GScriptConfig) -> None:
     layers: list[Layer] = [layer_config.to_layer(device) for layer_config in config.layers]
     num_features = sum(layer.num_features for layer in layers)
 
-    if num_features != mas_store.num_features():
+    if config.end_index - config.start_index != mas_store.num_features():
         raise ValueError(
             "Number of features in MAS store does not match number of features in layers. "
             f"{num_features=}, {mas_store.num_features()=}"
         )
 
-    def mas_to_layer_index(mas_index: int) -> Tuple[int, int]:
-        if mas_index < 0:
-            raise ValueError(f"Index must be non-negative. {mas_index=}")
+    def total_to_layer_index(total_index: int) -> Tuple[int, int]:
+        if total_index < 0:
+            raise ValueError(f"Index must be non-negative. {total_index=}")
         start_index = 0
         for i, layer in enumerate(layers):
-            if start_index + layer.num_features > mas_index:
-                return i, mas_index - start_index
+            if start_index + layer.num_features > total_index:
+                return i, total_index - start_index
             start_index += layer.num_features
-        raise ValueError(f"Feature index must be less than {start_index}. {mas_index=}")
+        raise ValueError(f"Feature index must be less than {start_index}. {total_index=}")
 
-    def feature_samples(mas_index: int) -> Tuple[list[str], float]:
-        samples = mas_store.feature_samples()[mas_index, :, :]
-        max_activation = mas_store.feature_max_activations()[mas_index, :].max().item()
+    def feature_samples(total_index: int) -> Tuple[list[str], float]:
+        samples = mas_store.feature_samples()[total_index - config.start_index, :, :]
+        max_activation = mas_store.feature_max_activations()[total_index - config.start_index, :].max().item()
 
         if model.tokenizer is None:
             raise AttributeError("Model tokenizer must not be None.")
@@ -110,9 +112,9 @@ def main(config: N2GScriptConfig) -> None:
         return tokens, max_activation
 
     def feature_activation(
-        mas_index: int,
+        total_index: int,
     ) -> Callable[[Int[Tensor, "num_samples sample_length"]], Float[Tensor, "num_samples sample_length"]]:
-        layer_index, feature_index = mas_to_layer_index(mas_index)
+        layer_index, feature_index = total_to_layer_index(total_index)
         layer = layers[layer_index]
 
         def result(samples: Int[Tensor, "num_samples sample_length"]) -> Float[Tensor, "num_samples sample_length"]:
@@ -139,7 +141,7 @@ def main(config: N2GScriptConfig) -> None:
 
     fit_config = n2g.FitConfig(
         prune_config=n2g.PruneConfig(prepend_bos=False),
-        importance_config=n2g.ImportanceConfig(prepend_bos=False),
+        importance_config=n2g.ImportanceConfig(prepend_bos=False, ignore_end_of_text=False),
         augmentation_config=n2g.AugmentationConfig(prepend_bos=False),
     )
     train_config = n2g.TrainConfig(fit_config=fit_config, stop_on_error=config.params.stop_on_error)

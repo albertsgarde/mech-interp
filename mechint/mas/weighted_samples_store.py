@@ -1,9 +1,10 @@
+import gc
 import pickle
 import random
 from io import BytesIO
 from pathlib import Path
 from random import Random
-from typing import Sequence
+from typing import Sequence, Tuple
 from zipfile import ZipFile
 
 import torch
@@ -138,16 +139,22 @@ class WeightedSamplesStore:
                 zip_file.writestr(key, value.getvalue())  # type: ignore
 
     @staticmethod
-    def load(file_name: Path, device: Device) -> "WeightedSamplesStore":
+    def load(file_name: Path, device: Device, feature_range: Tuple[int, int] | None = None) -> "WeightedSamplesStore":
         with ZipFile(file_name, "r") as zip_file:
             ints_serialized = zip_file.read("ints")
             values_dict = pickle.loads(ints_serialized)
 
             tensors_serialized = {name: zip_file.read(name) for name in zip_file.namelist() if name != "ints"}
-            tensors_dict = {
-                name: torch.load(BytesIO(tensors_serialized[name]), map_location=device.torch())
-                for name in tensors_serialized
-            }
+            tensors_dict = {}
+            for name in tensors_serialized:
+                tensor = torch.load(BytesIO(tensors_serialized[name]), map_location=device.torch())
+                if feature_range is not None:
+                    tensor_slice = tensor[feature_range[0] : feature_range[1]].clone()
+                    del tensor
+                    gc.collect()
+                    torch.cuda.empty_cache()
+                    tensor = tensor_slice
+                tensors_dict[name] = tensor
 
         weighted_samples_store = WeightedSamplesStore.__new__(WeightedSamplesStore)
         weighted_samples_store._activation_bins = tensors_dict["activation_bins"]
