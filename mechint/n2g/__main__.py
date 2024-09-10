@@ -22,7 +22,7 @@ from transformer_lens.hook_points import HookPoint  # type: ignore[import]
 
 from mechint.device import Device
 from mechint.layer import Layer, LayerConfig
-from mechint.mas.mas_store import MASStore
+from mechint.mas.weighted_samples_store import WeightedSamplesStore
 
 
 @dataclass
@@ -68,7 +68,7 @@ def main(config: N2GScriptConfig) -> None:
 
     device = Device.get()
 
-    mas_store = MASStore.load(Path(config.mas_path), device)
+    mas_store = WeightedSamplesStore.load(Path(config.mas_path), device)
 
     model = transformer_lens.HookedTransformer.from_pretrained(config.model_name, device=device.torch())
 
