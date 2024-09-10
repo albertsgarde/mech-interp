@@ -1,6 +1,7 @@
 import dataclasses
 import json
 import pickle
+import sys
 import typing
 from dataclasses import dataclass
 from pathlib import Path
@@ -186,12 +187,16 @@ def main(config: N2GScriptConfig) -> None:
         for i, model in enumerate(models):
             i = i + config.start_index
             if model is not None:
-                if config.create_dot:
-                    with (models_path / f"{i}.pkl").open("wb") as bin_file:
-                        pickle.dump(model, bin_file)
-                if config.create_pkl:
-                    with (models_path / f"{i}.dot").open("w", encoding="utf-8") as f:
-                        f.write(model.graphviz().source)
+                try:
+                    if config.create_dot:
+                        with (models_path / f"{i}.pkl").open("wb") as bin_file:
+                            pickle.dump(model, bin_file)
+                    if config.create_pkl:
+                        with (models_path / f"{i}.dot").open("w", encoding="utf-8") as f:
+                            f.write(model.graphviz().source)
+                except Exception as e:
+                    sys.stderr.write(f"An error occurred while processing index {i}: {str(e)}")
+                    raise
     if config.create_bin:
         bin_path = models_path / "all_models.bin"
         if bin_path.exists():
@@ -204,7 +209,11 @@ def main(config: N2GScriptConfig) -> None:
         for i, model in enumerate(models):
             i = i + config.start_index
             if model is not None:
-                feature_models[i] = FeatureModel.from_model(tokenizer, model)
+                try:
+                    feature_models[i] = FeatureModel.from_model(tokenizer, model)
+                except Exception as e:
+                    sys.stderr.write(f"An error occurred while processing index {i}: {str(e)}")
+                    raise
         all_models_bytes = FeatureModel.list_to_bin(
             feature_models,
         )
